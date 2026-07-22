@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -27,6 +27,17 @@ def get_tasknum(id):
             return jsonify(task),200
     return jsonify({'error': f"Task {id} Not found"}), 404
 
+@app.post("/tasks")
+def create_task():
+    data = request.get_json()
+
+    if "title" not in data or not data['title']:
+        return jsonify({"error": "Task Title does not exist"}), 400
+
+    new_task = { "id" : tasks[-1]["id"] + 1, "title" : data["title"], "done": False}
+
+    tasks.append(new_task)
+    return jsonify(new_task), 201
 
 
 if __name__ == '__main__':
