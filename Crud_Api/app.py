@@ -39,6 +39,30 @@ def create_task():
     tasks.append(new_task)
     return jsonify(new_task), 201
 
+@app.put("/tasks/<int:id>")
+def update_task(id):
+    data = request.get_json()
+
+    if "title" not in data or not data["title"]:
+        return jsonify({'error': 'Empty/Invalid Body'}), 400
+
+    for task in tasks:
+        if task["id"] == id:
+            task["title"] = data["title"]
+            return jsonify(task), 200
+        
+    return jsonify({'error': 'Unknown ID'}), 404
+
+
+@app.delete('/tasks/<int:id>')
+def delete_task(id):
+    for task in tasks:
+        if task['id'] == id:
+            tasks.remove(task)
+            return jsonify({"No Content": ""}), 204
+
+    return jsonify({'error': 'Id not found'}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True)
